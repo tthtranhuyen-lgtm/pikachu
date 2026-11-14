@@ -1,0 +1,1089 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>⚡ Pikachu Hán Tự — Luyện nhận diện chữ Hán</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800;900&family=Noto+Sans+SC:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --yellow:#ffd93b;
+    --yellow-d:#e8a600;
+    --yellow-dd:#c98f00;
+    --brown:#5a3d00;
+    --cream:#fffbe6;
+    --red:#e63946;
+    --green:#2a9d8f;
+    --orange:#ff7b00;
+    --blue:#3aa6e0;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  html,body{height:100%;}
+  body{
+    margin:0;
+    font-family:"Nunito","Segoe UI","Noto Sans SC","Microsoft YaHei",system-ui,sans-serif;
+    background:
+      radial-gradient(circle at 12% 6%, #FFF9D8 0%, transparent 42%),
+      radial-gradient(circle at 90% 94%, #FFD24A 0%, transparent 46%),
+      radial-gradient(circle at 50% 50%, #FFF3B0 0%, transparent 70%),
+      linear-gradient(160deg,#FFF9DC 0%,#FFE45C 46%,#FFC93C 100%);
+    background-attachment:fixed;
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    padding:10px 10px 110px;
+    color:var(--brown);
+    touch-action:manipulation;
+  }
+
+  /* ---------- HEADER ---------- */
+  .topbar{
+    width:100%;
+    max-width:860px;
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    margin-bottom:12px;
+    padding:12px 16px;
+    background:rgba(255,255,255,.72);
+    border:2px solid rgba(255,255,255,.95);
+    border-radius:22px;
+    box-shadow:0 10px 28px rgba(150,100,0,.16), inset 0 1px 0 #fff;
+    backdrop-filter:blur(10px);
+  }
+  .title-row{
+    display:flex;align-items:center;justify-content:space-between;
+    flex-wrap:wrap;gap:8px;
+  }
+  h1{
+    font-size:21px;margin:0;letter-spacing:.3px;color:#6B4A00;
+    text-shadow:0 1px 0 #fff;
+  }
+  h1 span{color:#c1121f;}
+  .hud{display:flex;gap:8px;flex-wrap:wrap;}
+  .chip{
+    display:flex;align-items:center;gap:6px;
+    background:linear-gradient(180deg,#FFFDF2,#FFEFAE);
+    border:2px solid var(--yellow);
+    border-radius:999px;
+    padding:5px 13px;
+    font-size:13.5px;
+    font-weight:900;
+    color:#6B4A00;
+    box-shadow:0 2px 0 rgba(200,150,0,.3);
+    white-space:nowrap;
+  }
+  .chip span{font-variant-numeric:tabular-nums;}
+  .controls{display:flex;gap:7px;flex-wrap:wrap;align-items:center;}
+  button, select{
+    font-family:inherit;
+    font-size:13px;
+    font-weight:900;
+    color:#6B4A00;
+    background:linear-gradient(180deg,#FFFFFF,#FFEDA0);
+    border:2px solid #F0C33C;
+    border-bottom-width:4px;
+    border-radius:12px;
+    padding:7px 13px;
+    cursor:pointer;
+    transition:transform .1s,border-width .1s,filter .15s;
+    box-shadow:0 2px 6px rgba(180,130,0,.14);
+  }
+  button:hover, select:hover{filter:brightness(1.05);}
+  button:active{transform:translateY(3px);border-bottom-width:2px;}
+  #btnNew{background:linear-gradient(180deg,#FFD93B,#F5A800);border-color:#E09400;color:#4A3300;}
+  select{appearance:none;padding-right:26px;}
+
+  /* ---------- BOARD ---------- */
+  .board-wrap{
+    position:relative;
+    background:rgba(255,255,255,.6);
+    border:3px solid var(--yellow-d);
+    border-radius:20px;
+    box-shadow:0 12px 30px rgba(120,80,0,.22), inset 0 0 30px rgba(255,255,255,.6);
+    padding:0;
+    margin:0 auto;
+  }
+  .board{
+    display:grid;
+    position:relative;
+    --fs:22px;
+  }
+  .tile{
+    width:calc(100% - 6px);
+    height:calc(100% - 6px);
+    margin:3px;
+    padding:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-family:"Noto Sans SC","Microsoft YaHei",sans-serif;
+    font-size:var(--fs);
+    font-weight:900;
+    line-height:1;
+    color:#4a3000;
+    background:linear-gradient(180deg,#FFFDF0 0%,#FFE680 100%);
+    border:2px solid #d99b00;
+    border-radius:11px;
+    box-shadow:0 3px 0 #c98f00, inset 0 -2px 0 rgba(255,255,255,.7);
+    cursor:pointer;
+    user-select:none;
+    transition:transform .1s, box-shadow .1s, background .12s, border-color .12s;
+    overflow:hidden;
+    text-align:center;
+    position:relative;
+  }
+  .tile::after{
+    content:"";position:absolute;inset:3px;border-radius:8px;
+    background:linear-gradient(180deg,rgba(255,255,255,.8),rgba(255,255,255,0) 55%);
+    pointer-events:none;
+  }
+  .tile:hover{
+    background:linear-gradient(180deg,#fff 0%,#ffe066 100%);
+    transform:translateY(-3px);
+    box-shadow:0 6px 0 #c98f00, inset 0 -2px 0 rgba(255,255,255,.7);
+  }
+  .tile.sel{
+    background:linear-gradient(180deg,#fff3a0,#ffc93c);
+    border-color:#e63946;
+    box-shadow:0 0 0 3px rgba(230,57,70,.45), 0 3px 0 #c98f00;
+    transform:translateY(-3px) scale(1.04);
+  }
+  .tile.wrong{
+    background:linear-gradient(180deg,#ffd6d6,#ff8a8a);
+    border-color:var(--red);
+    animation:shake .32s;
+  }
+  @keyframes shake{
+    0%,100%{transform:translateX(0)}
+    25%{transform:translateX(-5px)}
+    75%{transform:translateX(5px)}
+  }
+  .tile.hint{
+    animation:pulse 0.8s ease-in-out 2;
+  }
+  @keyframes pulse{
+    0%,100%{box-shadow:0 3px 0 #c98f00;}
+    50%{box-shadow:0 0 0 5px rgba(42,157,143,.65), 0 3px 0 #c98f00;}
+  }
+  .tile.matched{
+    animation:pop .3s ease-out forwards;
+    pointer-events:none;
+  }
+  @keyframes pop{
+    0%{transform:scale(1);}
+    45%{transform:scale(1.15);background:linear-gradient(180deg,#c8f7d0,#6ee7a0);border-color:#3FBF6B;}
+    100%{transform:scale(0);opacity:0;}
+  }
+
+  #pathLayer{
+    position:absolute;
+    left:0;top:0;
+    pointer-events:none;
+    overflow:visible;
+  }
+  #pathLayer polyline{
+    fill:none;
+    stroke:#ff7b00;
+    stroke-width:5;
+    stroke-linecap:round;
+    stroke-linejoin:round;
+    filter:drop-shadow(0 0 6px rgba(255,123,0,.9));
+    animation:fadeLine .55s ease-out forwards;
+  }
+  @keyframes fadeLine{
+    0%{opacity:0;}
+    15%{opacity:1;}
+    75%{opacity:1;}
+    100%{opacity:0;}
+  }
+
+  /* ---------- INFO BAR ---------- */
+  .infobar{
+    margin-top:12px;
+    min-height:28px;
+    font-size:13.5px;
+    font-weight:800;
+    background:rgba(255,251,230,.9);
+    border:2px dashed var(--yellow-d);
+    border-radius:999px;
+    padding:5px 18px;
+    text-align:center;
+    max-width:860px;
+    color:#6B4A00;
+  }
+  .infobar b{color:#c1121f;}
+
+  /* ---------- VOCAB ---------- */
+  .vocab{
+    display:none;
+    margin-top:14px;
+    width:100%;
+    max-width:860px;
+    background:rgba(255,255,255,.8);
+    border:3px solid var(--yellow-d);
+    border-radius:18px;
+    padding:14px;
+    grid-template-columns:repeat(auto-fill,minmax(140px,1fr));
+    gap:8px;
+    box-shadow:0 8px 22px rgba(150,100,0,.14);
+  }
+  .vocab.show{display:grid;}
+  .vcard{
+    background:#FFFDF0;
+    border:2px solid #f0d060;
+    border-radius:10px;
+    padding:7px 11px;
+    font-size:13px;
+    line-height:1.35;
+  }
+  .vcard .hz{font-size:19px;font-weight:900;color:#b5171f;letter-spacing:1px;font-family:"Noto Sans SC",sans-serif;}
+  .vcard .py{color:#2a6f97;font-weight:800;}
+  .vcard .mn{color:#6b5b2e;}
+
+  /* ---------- PIKACHU FLOAT ---------- */
+  .pika-float{
+    position:fixed;
+    bottom:18px;
+    right:18px;
+    z-index:40;
+    pointer-events:none;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+  }
+  .pika-mascot{
+    position:relative;
+    width:112px;
+    cursor:pointer;
+    pointer-events:auto;
+    filter:drop-shadow(0 10px 14px rgba(150,100,0,.35));
+    animation:pikaBreathe 3.2s ease-in-out infinite;
+    transition:transform .2s;
+  }
+  .pika-mascot:active{transform:scale(.95);}
+  @keyframes pikaBreathe{
+    0%,100%{transform:translateY(0) scale(1);}
+    50%{transform:translateY(-5px) scale(1.018);}
+  }
+  .pika-mascot.react-select{animation:pikaBounce .55s ease;}
+  @keyframes pikaBounce{
+    0%{transform:translateY(0) scale(1);}
+    30%{transform:translateY(-18px) scale(1.08);}
+    60%{transform:translateY(0) scale(.97);}
+    100%{transform:translateY(0) scale(1);}
+  }
+  .pika-mascot.react-happy{animation:pikaJump .8s ease;}
+  @keyframes pikaJump{
+    0%{transform:translateY(0) rotate(0);}
+    22%{transform:translateY(-30px) rotate(-7deg) scale(1.07);}
+    48%{transform:translateY(-4px) rotate(5deg);}
+    72%{transform:translateY(-16px) rotate(-3deg);}
+    100%{transform:translateY(0) rotate(0);}
+  }
+  .pika-mascot.react-sad{animation:pikaShake .55s ease;}
+  @keyframes pikaShake{
+    0%,100%{transform:translateX(0) rotate(0);}
+    20%{transform:translateX(-9px) rotate(-4deg);}
+    42%{transform:translateX(9px) rotate(4deg);}
+    64%{transform:translateX(-6px) rotate(-3deg);}
+    84%{transform:translateX(6px) rotate(2deg);}
+  }
+  .pika-svg{width:100%;height:auto;display:block;}
+  .zap{
+    position:absolute;font-size:24px;opacity:0;pointer-events:none;
+    filter:drop-shadow(0 0 6px rgba(255,200,0,.95));
+  }
+  .zap1{top:4%;left:-8%;}
+  .zap2{bottom:16%;right:-10%;}
+  .pika-mascot.happy .zap1{animation:zapOut .9s ease-out;}
+  .pika-mascot.happy .zap2{animation:zapOut .9s ease-out .1s;}
+  @keyframes zapOut{
+    0%{opacity:0;transform:scale(.3) rotate(-30deg);}
+    28%{opacity:1;transform:scale(1.4) rotate(12deg);}
+    100%{opacity:0;transform:scale(.7) rotate(40deg) translateY(-26px);}
+  }
+
+  /* ---------- PIKA BUBBLE ---------- */
+  .pika-bubble{
+    position:absolute;
+    bottom:calc(100% + 6px);
+    right:0;
+    background:#fff;
+    border:3px solid var(--yellow-d);
+    border-radius:16px;
+    padding:9px 16px;
+    min-width:130px;
+    max-width:230px;
+    text-align:center;
+    opacity:0;
+    transform:translateY(10px) scale(.9);
+    transition:opacity .25s, transform .25s cubic-bezier(.2,1.4,.5,1);
+    pointer-events:none;
+    box-shadow:0 8px 22px rgba(150,100,0,.25);
+  }
+  .pika-bubble::after{
+    content:"";
+    position:absolute;
+    top:100%;
+    right:26px;
+    border:9px solid transparent;
+    border-top-color:var(--yellow-d);
+    margin-top:-1px;
+  }
+  .pika-bubble::before{
+    content:"";
+    position:absolute;
+    top:100%;
+    right:27px;
+    border:8px solid transparent;
+    border-top-color:#fff;
+    z-index:1;
+  }
+  .pika-bubble.show{
+    opacity:1;
+    transform:translateY(0) scale(1);
+  }
+  .pika-word{
+    font-family:"Noto Sans SC","Microsoft YaHei",sans-serif;
+    font-size:26px;
+    font-weight:900;
+    color:#C46A00;
+    letter-spacing:2px;
+    line-height:1.15;
+  }
+  .pika-sub{
+    font-size:12.5px;
+    font-weight:800;
+    color:#3AA6E0;
+    margin-top:1px;
+    line-height:1.3;
+  }
+
+  /* ---------- OVERLAY ---------- */
+  .overlay{
+    position:fixed;inset:0;
+    background:rgba(60,40,0,.55);
+    display:flex;align-items:center;justify-content:center;
+    z-index:80;
+    backdrop-filter:blur(4px);
+    padding:20px;
+  }
+  .overlay.hidden{display:none;}
+  .card{
+    background:linear-gradient(180deg,#fffdf0,#ffe680);
+    border:4px solid var(--yellow-d);
+    border-radius:24px;
+    padding:26px 34px;
+    text-align:center;
+    box-shadow:0 22px 56px rgba(0,0,0,.36);
+    animation:popIn .38s cubic-bezier(.2,1.5,.5,1);
+    max-width:340px;
+  }
+  @keyframes popIn{from{transform:scale(.7);opacity:0}to{transform:scale(1);opacity:1}}
+  .card .big{font-size:56px;line-height:1;}
+  .card h2{margin:6px 0 8px;font-size:24px;color:#c1121f;font-weight:900;}
+  .card p{margin:4px 0;font-size:15px;font-weight:800;color:#7A5A10;line-height:1.6;}
+  .card button{margin-top:16px;font-size:16px;padding:10px 26px;}
+
+  /* ---------- RESPONSIVE ---------- */
+  @media(max-width:880px){
+    .pika-float{bottom:10px;right:10px;}
+    .pika-mascot{width:72px;}
+    .pika-bubble{min-width:110px;max-width:180px;padding:7px 12px;}
+    .pika-word{font-size:22px;}
+    .pika-sub{font-size:11px;}
+    body{padding-bottom:90px;}
+  }
+  @media(max-width:520px){
+    h1{font-size:17px;}
+    .chip{font-size:12px;padding:4px 9px;}
+    button,select{font-size:12px;padding:6px 10px;}
+    .infobar{font-size:12px;}
+    .pika-mascot{width:62px;}
+    .pika-bubble{max-width:160px;}
+    .pika-word{font-size:20px;letter-spacing:1px;}
+    .pika-sub{font-size:10.5px;}
+    body{padding-bottom:82px;}
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="title-row">
+    <h1>⚡ Pikachu <span>Hán Tự</span> — Luyện nhận diện chữ Hán</h1>
+    <div class="hud">
+      <div class="chip">⭐ <span id="score">0</span></div>
+      <div class="chip">⏱ <span id="time">00:00</span></div>
+      <div class="chip">🀄 <span id="left">0</span></div>
+    </div>
+  </div>
+  <div class="controls">
+    <select id="level">
+      <option value="easy">Dễ (6×6)</option>
+      <option value="normal" selected>Vừa (6×8)</option>
+      <option value="hard">Khó (8×8)</option>
+    </select>
+    <button id="btnNew">🔄 Chơi mới</button>
+    <button id="btnHint">💡 Gợi ý</button>
+    <button id="btnShuffle">🔀 Xáo trộn</button>
+    <button id="btnVocab">📖 Từ vựng</button>
+    <button id="btnSound">🔊</button>
+  </div>
+</div>
+
+<div class="board-wrap" id="boardWrap">
+  <div class="board" id="board"></div>
+  <svg id="pathLayer" xmlns="http://www.w3.org/2000/svg"></svg>
+</div>
+
+<div class="infobar" id="infobar">👆 Chạm vào một thẻ để xem phiên âm và nghĩa của từ</div>
+
+<div class="vocab" id="vocab"></div>
+
+<!-- ===== PIKACHU FLOATING MASCOT ===== -->
+<div class="pika-float">
+  <div class="pika-bubble" id="pikaBubble">
+    <div class="pika-word" id="pikaWord">?</div>
+    <div class="pika-sub" id="pikaSub">Chọn 1 từ nhé!</div>
+  </div>
+  <div class="pika-mascot" id="pika" title="Nhấn để nghe lại từ vừa ghép">
+    <svg class="pika-svg" viewBox="0 0 220 230" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <!-- Tai -->
+      <path d="M80 102 L26 8 L112 78 Z" fill="#FFD93B" stroke="#C08A00" stroke-width="7" stroke-linejoin="round"/>
+      <path d="M26 8 L46.5 43.7 L58.7 34.6 Z" fill="#4A3300"/>
+      <path d="M140 102 L194 8 L108 78 Z" fill="#FFD93B" stroke="#C08A00" stroke-width="7" stroke-linejoin="round"/>
+      <path d="M194 8 L173.5 43.7 L161.3 34.6 Z" fill="#4A3300"/>
+      <!-- Đầu -->
+      <circle cx="110" cy="142" r="68" fill="#FFD93B" stroke="#C08A00" stroke-width="7"/>
+      <!-- Má hồng -->
+      <ellipse cx="62" cy="168" rx="17" ry="14" fill="#FF5B5B" opacity="0.9"/>
+      <ellipse cx="158" cy="168" rx="17" ry="14" fill="#FF5B5B" opacity="0.9"/>
+      <!-- Mắt -->
+      <ellipse cx="85" cy="130" rx="12" ry="14" fill="#2B1E00"/>
+      <ellipse cx="135" cy="130" rx="12" ry="14" fill="#2B1E00"/>
+      <circle cx="89" cy="125" r="4.5" fill="#fff"/>
+      <circle cx="139" cy="125" r="4.5" fill="#fff"/>
+      <!-- Mũi -->
+      <ellipse cx="110" cy="148" rx="5" ry="3.5" fill="#2B1E00"/>
+      <!-- Miệng -->
+      <path d="M97 159 Q103.5 170 110 160 Q116.5 170 123 159"
+            fill="none" stroke="#2B1E00" stroke-width="4.5"
+            stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    <span class="zap zap1">⚡</span>
+    <span class="zap zap2">⚡</span>
+  </div>
+</div>
+
+<div class="overlay hidden" id="overlay">
+  <div class="card">
+    <div class="big">🎉⚡</div>
+    <h2>Hoàn thành xuất sắc!</h2>
+    <p id="ovText"></p>
+    <button id="ovBtn">Chơi lại</button>
+  </div>
+</div>
+
+<script>
+/* =========================================================
+   1. DỮ LIỆU TỪ VỰNG (giữ nguyên)
+   ========================================================= */
+const WORDS = [
+  {w:'苹果', p:'píngguǒ',  m:'quả táo'},
+  {w:'老师', p:'lǎoshī',   m:'thầy/cô giáo'},
+  {w:'多少', p:'duōshao',  m:'bao nhiêu'},
+  {w:'西瓜', p:'xīguā',    m:'dưa hấu'},
+  {w:'找钱', p:'zhǎoqián', m:'trả lại tiền'},
+  {w:'手机', p:'shǒujī',   m:'điện thoại di động'},
+  {w:'咖啡', p:'kāfēi',    m:'cà phê'},
+  {w:'一共', p:'yígòng',   m:'tổng cộng'},
+  {w:'公斤', p:'gōngjīn',  m:'ki-lô-gam'},
+  {w:'银行', p:'yínháng',  m:'ngân hàng'},
+  {w:'房间', p:'fángjiān', m:'căn phòng'},
+  {w:'桌子', p:'zhuōzi',   m:'cái bàn'},
+  {w:'椅子', p:'yǐzi',     m:'cái ghế'},
+  {w:'杯子', p:'bēizi',    m:'cái cốc / ly'},
+  {w:'便宜', p:'piányi',   m:'rẻ'},
+  {w:'超市', p:'chāoshì',  m:'siêu thị'},
+  {w:'邮局', p:'yóujú',    m:'bưu điện'},
+  {w:'东西', p:'dōngxi',   m:'đồ vật'},
+  {w:'明天', p:'míngtiān', m:'ngày mai'},
+  {w:'今天', p:'jīntiān',  m:'hôm nay'},
+  {w:'昨天', p:'zuótiān',  m:'hôm qua'},
+  {w:'早上', p:'zǎoshang', m:'buổi sáng sớm'},
+  {w:'上午', p:'shàngwǔ',  m:'buổi sáng (trước 12h)'},
+  {w:'中午', p:'zhōngwǔ',  m:'buổi trưa'},
+  {w:'下午', p:'xiàwǔ',    m:'buổi chiều'},
+  {w:'晚上', p:'wǎnshang', m:'buổi tối'},
+  {w:'鸡蛋', p:'jīdàn',    m:'trứng gà'},
+  {w:'你好', p:'nǐ hǎo',   m:'xin chào'},
+  {w:'睡觉', p:'shuìjiào', m:'ngủ'},
+  {w:'起床', p:'qǐchuáng', m:'thức dậy'},
+  {w:'哪儿', p:'nǎr',      m:'ở đâu'},
+  {w:'喝水', p:'hēshuǐ',   m:'uống nước'},
+  {w:'吃饭', p:'chīfàn',   m:'ăn cơm'},
+  {w:'早饭', p:'zǎofàn',   m:'bữa sáng'},
+  {w:'晚饭', p:'wǎnfàn',   m:'bữa tối'}
+];
+
+const LEVELS = { easy:[6,6], normal:[6,8], hard:[8,8] };
+
+/* =========================================================
+   2. TRẠNG THÁI (giữ nguyên)
+   ========================================================= */
+const S = {
+  rows:0, cols:0,
+  grid:[],
+  selected:null,
+  cell:60,
+  remaining:0,
+  score:0,
+  seconds:0,
+  timerId:null,
+  lock:false,
+  playing:false,
+  soundOn:true,
+  lastWord:null
+};
+
+/* DOM */
+const boardEl   = document.getElementById('board');
+const boardWrap = document.getElementById('boardWrap');
+const svgEl     = document.getElementById('pathLayer');
+const infobar   = document.getElementById('infobar');
+const vocabEl   = document.getElementById('vocab');
+const overlay   = document.getElementById('overlay');
+const ovText    = document.getElementById('ovText');
+const scoreEl   = document.getElementById('score');
+const timeEl    = document.getElementById('time');
+const leftEl    = document.getElementById('left');
+const levelSel  = document.getElementById('level');
+
+const pikaEl    = document.getElementById('pika');
+const pikaBubble= document.getElementById('pikaBubble');
+const pikaWord  = document.getElementById('pikaWord');
+const pikaSub   = document.getElementById('pikaSub');
+
+/* =========================================================
+   3. ÂM THANH (giữ nguyên)
+   ========================================================= */
+let actx = null;
+function beep(freq, dur, type='sine', vol=0.07){
+  if(!S.soundOn) return;
+  try{
+    if(!actx) actx = new (window.AudioContext || window.webkitAudioContext)();
+    const o = actx.createOscillator();
+    const g = actx.createGain();
+    o.type = type;
+    o.frequency.setValueAtTime(freq, actx.currentTime);
+    o.connect(g); g.connect(actx.destination);
+    g.gain.setValueAtTime(vol, actx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.0001, actx.currentTime + dur);
+    o.start(); o.stop(actx.currentTime + dur);
+  }catch(e){}
+}
+function sfxSelect(){ beep(720, 0.06, 'square', 0.05); }
+function sfxWrong(){ beep(200, 0.13, 'sawtooth', 0.06); }
+function sfxMatch(){ beep(880,0.08,'sine',0.07); setTimeout(()=>beep(1240,0.09,'sine',0.07),80); }
+function sfxWin(){ [523,659,784,1047].forEach((f,i)=>setTimeout(()=>beep(f,0.18,'sine',0.08), i*130)); }
+
+/* =========================================================
+   4. TIỆN ÍCH (giữ nguyên)
+   ========================================================= */
+function shuffle(a){
+  for(let i=a.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]] = [a[j],a[i]];
+  }
+  return a;
+}
+function pad2(n){ return String(n).padStart(2,'0'); }
+
+/* =========================================================
+   5. TÍNH KÍCH THƯỚC Ô (giữ nguyên)
+   ========================================================= */
+function computeCell(){
+  const maxW = Math.min(window.innerWidth - 34, 800);
+  const maxH = window.innerHeight - 250;
+  const cw = Math.floor(maxW / (S.cols + 2));
+  const ch = Math.floor(maxH / (S.rows + 2));
+  return Math.max(28, Math.min(cw, ch, 78));
+}
+
+function applyLayout(){
+  const cell = computeCell();
+  S.cell = cell;
+  const W = cell * (S.cols + 2);
+  const H = cell * (S.rows + 2);
+
+  boardEl.style.width  = W + 'px';
+  boardEl.style.height = H + 'px';
+  boardEl.style.gridTemplateColumns = `repeat(${S.cols + 2}, ${cell}px)`;
+  boardEl.style.gridTemplateRows    = `repeat(${S.rows + 2}, ${cell}px)`;
+  boardEl.style.setProperty('--fs', Math.round(cell * 0.38) + 'px');
+
+  boardWrap.style.width  = W + 'px';
+  boardWrap.style.height = H + 'px';
+
+  svgEl.setAttribute('viewBox', `0 0 ${W} ${H}`);
+  svgEl.setAttribute('width', W);
+  svgEl.setAttribute('height', H);
+}
+
+/* =========================================================
+   6. KHỞI TẠO BÀN CHƠI (giữ nguyên)
+   ========================================================= */
+function buildBoard(rows, cols){
+  S.rows = rows;
+  S.cols = cols;
+
+  const totalCells = rows * cols;
+  const pairCount  = totalCells / 2;
+
+  const pool = shuffle([...WORDS]).slice(0, pairCount);
+  let idx = 0;
+  const chosen = [];
+  while(chosen.length < pairCount){
+    chosen.push(pool[idx % pool.length]);
+    idx++;
+  }
+
+  const tiles = [];
+  chosen.forEach(t => {
+    tiles.push({w:t.w, p:t.p, m:t.m});
+    tiles.push({w:t.w, p:t.p, m:t.m});
+  });
+  shuffle(tiles);
+
+  S.grid = [];
+  for(let r=0;r<rows+2;r++) S.grid.push(new Array(cols+2).fill(null));
+
+  let k = 0;
+  for(let r=1;r<=rows;r++)
+    for(let c=1;c<=cols;c++)
+      S.grid[r][c] = tiles[k++];
+
+  S.remaining = pairCount;
+  S.selected  = null;
+  S.lock      = false;
+
+  render();
+  buildVocab();
+  updateHUD();
+}
+
+function render(){
+  boardEl.innerHTML = '';
+  for(let r=1;r<=S.rows;r++){
+    for(let c=1;c<=S.cols;c++){
+      const t = S.grid[r][c];
+      if(!t) continue;
+      const el = document.createElement('button');
+      el.type = 'button';
+      el.className = 'tile';
+      el.textContent = t.w;
+      el.title = `${t.w} · ${t.p} · ${t.m}`;
+      el.style.gridRow = String(r + 1);
+      el.style.gridColumn = String(c + 1);
+      el.addEventListener('click', () => onTileClick(r, c));
+      t.el = el;
+      boardEl.appendChild(el);
+    }
+  }
+  applyLayout();
+}
+
+/* =========================================================
+   7. THUẬT TOÁN NỐI PIKACHU (giữ nguyên)
+   ========================================================= */
+function isEmpty(r, c){
+  if(r < 0 || r >= S.rows + 2 || c < 0 || c >= S.cols + 2) return false;
+  return S.grid[r][c] === null;
+}
+function lineClearH(r, c1, c2){
+  const a = Math.min(c1, c2), b = Math.max(c1, c2);
+  for(let c = a + 1; c < b; c++) if(S.grid[r][c]) return false;
+  return true;
+}
+function lineClearV(c, r1, r2){
+  const a = Math.min(r1, r2), b = Math.max(r1, r2);
+  for(let r = a + 1; r < b; r++) if(S.grid[r][c]) return false;
+  return true;
+}
+
+function canConnect(a, b){
+  if(a.r === b.r && a.c === b.c) return null;
+
+  if(a.r === b.r && lineClearH(a.r, a.c, b.c)) return [[a.r,a.c],[b.r,b.c]];
+  if(a.c === b.c && lineClearV(a.c, a.r, b.r)) return [[a.r,a.c],[b.r,b.c]];
+
+  if(isEmpty(a.r, b.c) && lineClearH(a.r, a.c, b.c) && lineClearV(b.c, a.r, b.r))
+    return [[a.r,a.c],[a.r,b.c],[b.r,b.c]];
+  if(isEmpty(b.r, a.c) && lineClearV(a.c, a.r, b.r) && lineClearH(b.r, a.c, b.c))
+    return [[a.r,a.c],[b.r,a.c],[b.r,b.c]];
+
+  for(let c = 0; c < S.cols + 2; c++){
+    if(c === a.c || c === b.c) continue;
+    if(!isEmpty(a.r, c) || !isEmpty(b.r, c)) continue;
+    if(lineClearH(a.r, a.c, c) && lineClearV(c, a.r, b.r) && lineClearH(b.r, c, b.c))
+      return [[a.r,a.c],[a.r,c],[b.r,c],[b.r,b.c]];
+  }
+  for(let r = 0; r < S.rows + 2; r++){
+    if(r === a.r || r === b.r) continue;
+    if(!isEmpty(r, a.c) || !isEmpty(r, b.c)) continue;
+    if(lineClearV(a.c, a.r, r) && lineClearH(r, a.c, b.c) && lineClearV(b.c, r, b.r))
+      return [[a.r,a.c],[r,a.c],[r,b.c],[b.r,b.c]];
+  }
+  return null;
+}
+
+/* =========================================================
+   8. GIỌNG ĐỌC TIẾNG TRUNG  ★ MỚI
+   ========================================================= */
+let voices = [];
+function loadVoices(){
+  if('speechSynthesis' in window) voices = window.speechSynthesis.getVoices();
+}
+if('speechSynthesis' in window){
+  loadVoices();
+  window.speechSynthesis.onvoiceschanged = loadVoices;
+}
+
+function speak(text){
+  if(!S.soundOn) return;
+  if(!('speechSynthesis' in window)) return;
+  try{
+    window.speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = 'zh-CN';
+    u.rate = 0.8;
+    u.pitch = 1.05;
+    u.volume = 1;
+    const v =
+      voices.find(x => /zh[-_]?CN/i.test(x.lang)) ||
+      voices.find(x => /zh[-_]?Hans/i.test(x.lang)) ||
+      voices.find(x => /^zh/i.test(x.lang));
+    if(v) u.voice = v;
+    window.speechSynthesis.speak(u);
+  }catch(e){}
+}
+
+/* =========================================================
+   9. PIKACHU PHẢN ỨNG  ★ MỚI
+   ========================================================= */
+let pikaSayTimer = null;
+function pikaReact(kind){
+  pikaEl.classList.remove('react-select','react-happy','react-sad','happy');
+  void pikaEl.offsetWidth;
+  if(kind === 'select') pikaEl.classList.add('react-select');
+  if(kind === 'happy'){
+    pikaEl.classList.add('react-happy','happy');
+    setTimeout(() => pikaEl.classList.remove('happy'), 950);
+  }
+  if(kind === 'sad') pikaEl.classList.add('react-sad');
+}
+
+function pikaSay(main, sub){
+  pikaWord.textContent = main || '?';
+  pikaSub.textContent  = sub || '';
+  pikaBubble.classList.add('show');
+  clearTimeout(pikaSayTimer);
+  pikaSayTimer = setTimeout(() => pikaBubble.classList.remove('show'), 2800);
+}
+
+/* =========================================================
+   10. XỬ LÝ CLICK (giữ nguyên logic + thêm Pikachu)
+   ========================================================= */
+function deselectAll(){
+  document.querySelectorAll('.tile.sel').forEach(e => e.classList.remove('sel'));
+  S.selected = null;
+}
+
+function onTileClick(r, c){
+  if(S.lock || !S.playing) return;
+  const t = S.grid[r][c];
+  if(!t || !t.el) return;
+
+  // Bấm lại chính thẻ đang chọn → bỏ chọn
+  if(S.selected && S.selected.r === r && S.selected.c === c){
+    t.el.classList.remove('sel');
+    S.selected = null;
+    pikaSay('?', 'Chọn một từ nhé!');
+    return;
+  }
+
+  // Chọn thẻ đầu tiên
+  if(!S.selected){
+    S.selected = {r, c};
+    t.el.classList.add('sel');
+    showWordInfo(t);
+    pikaReact('select');
+    pikaSay(t.w, t.p + ' · ' + t.m);
+    sfxSelect();
+    return;
+  }
+
+  const s  = S.selected;
+  const ta = S.grid[s.r][s.c];
+  if(!ta || !ta.el){ deselectAll(); return; }
+
+  // Cùng chữ Hán? → thử nối
+  if(ta.w === t.w){
+    const path = canConnect(s, {r, c});
+    if(path){
+      doMatch(s, {r, c}, path);
+      return;
+    }
+  }
+
+  // Sai → rung đỏ
+  S.lock = true;
+  t.el.classList.add('sel');
+  ta.el.classList.add('wrong');
+  t.el.classList.add('wrong');
+  sfxWrong();
+  showWordInfo(t);
+  pikaReact('sad');
+  pikaSay('Thử lại nhé!', '🐭');
+
+  setTimeout(() => {
+    if(ta.el) ta.el.classList.remove('sel','wrong');
+    if(t.el)  t.el.classList.remove('wrong');
+    S.lock = false;
+    S.selected = {r, c};
+    if(t.el) t.el.classList.add('sel');
+  }, 340);
+}
+
+function doMatch(a, b, path){
+  S.lock = true;
+  const ta = S.grid[a.r][a.c];
+  const tb = S.grid[b.r][b.c];
+
+  drawPath(path);
+  sfxMatch();
+
+  // ★ ĐỌC TIẾNG TRUNG + PIKACHU VUI MỪNG
+  S.lastWord = ta.w;
+  speak(ta.w);
+  pikaReact('happy');
+  pikaSay(ta.w, '✓ ' + ta.p + ' · ' + ta.m);
+
+  if(ta.el) ta.el.classList.add('matched');
+  if(tb.el) tb.el.classList.add('matched');
+
+  S.score += 10;
+  S.remaining--;
+
+  setTimeout(() => {
+    if(ta.el) ta.el.remove();
+    if(tb.el) tb.el.remove();
+    S.grid[a.r][a.c] = null;
+    S.grid[b.r][b.c] = null;
+    S.selected = null;
+    S.lock = false;
+    updateHUD();
+
+    if(S.remaining === 0){
+      winGame();
+    } else if(!findPair()){
+      infobar.innerHTML = '🔀 <b>Hết nước đi!</b> Tự động xáo trộn lại bàn...';
+      setTimeout(() => shuffleBoard(true), 400);
+    }
+  }, 300);
+}
+
+/* Vẽ đường nối */
+function drawPath(points){
+  const cs = S.cell;
+  const pts = points.map(([r, c]) => `${(c + 0.5) * cs},${(r + 0.5) * cs}`).join(' ');
+  const pl = document.createElementNS('http://www.w3.org/2000/svg', 'polyline');
+  pl.setAttribute('points', pts);
+  svgEl.appendChild(pl);
+  setTimeout(() => pl.remove(), 620);
+}
+
+/* =========================================================
+   11. TÌM NƯỚC ĐI & XÁO TRỘN (giữ nguyên)
+   ========================================================= */
+function remainingTiles(){
+  const list = [];
+  for(let r = 1; r <= S.rows; r++)
+    for(let c = 1; c <= S.cols; c++)
+      if(S.grid[r][c]) list.push({r, c, w:S.grid[r][c].w});
+  return list;
+}
+
+function findPair(){
+  const list = remainingTiles();
+  for(let i = 0; i < list.length; i++){
+    for(let j = i + 1; j < list.length; j++){
+      if(list[i].w !== list[j].w) continue;
+      const p = canConnect({r:list[i].r, c:list[i].c}, {r:list[j].r, c:list[j].c});
+      if(p) return [list[i], list[j], p];
+    }
+  }
+  return null;
+}
+
+function shuffleBoard(auto = false){
+  if(!S.playing) return;
+  let tries = 0;
+  do{
+    const positions = [];
+    const tiles = [];
+    for(let r = 1; r <= S.rows; r++)
+      for(let c = 1; c <= S.cols; c++)
+        if(S.grid[r][c]){ positions.push({r, c}); tiles.push(S.grid[r][c]); }
+
+    shuffle(tiles);
+    positions.forEach(p => S.grid[p.r][p.c] = null);
+    positions.forEach((p, i) => S.grid[p.r][p.c] = tiles[i]);
+    tries++;
+  } while(!findPair() && tries < 60);
+
+  S.selected = null;
+  S.lock = false;
+  render();
+  if(auto) infobar.innerHTML = '🔀 Đã xáo trộn lại bàn chơi!';
+}
+
+/* =========================================================
+   12. GỢI Ý (giữ nguyên)
+   ========================================================= */
+function hint(){
+  if(!S.playing || S.lock) return;
+  const p = findPair();
+  if(!p){
+    infobar.innerHTML = '😅 Không còn cặp nào nối được — hãy bấm <b>Xáo trộn</b>!';
+    return;
+  }
+  const [a, b] = p;
+  [a, b].forEach(x => {
+    const el = S.grid[x.r][x.c] && S.grid[x.r][x.c].el;
+    if(el){
+      el.classList.add('hint');
+      setTimeout(() => el.classList.remove('hint'), 1700);
+    }
+  });
+  beep(1000, 0.07, 'triangle', 0.05);
+  infobar.innerHTML = '💡 Đã khoanh 2 thẻ giống nhau — hãy tìm đường nối nhé!';
+}
+
+/* =========================================================
+   13. HUD / THÔNG TIN (giữ nguyên)
+   ========================================================= */
+function updateHUD(){
+  scoreEl.textContent = S.score;
+  leftEl.textContent  = S.remaining;
+  timeEl.textContent  = pad2(Math.floor(S.seconds / 60)) + ':' + pad2(S.seconds % 60);
+}
+
+function showWordInfo(t){
+  infobar.innerHTML = `<b>${t.w}</b> &nbsp;·&nbsp; ${t.p} &nbsp;·&nbsp; ${t.m}`;
+}
+
+/* =========================================================
+   14. ĐỒNG HỒ & KẾT THÚC (giữ nguyên + giọng nói)
+   ========================================================= */
+function startTimer(){
+  clearInterval(S.timerId);
+  S.timerId = setInterval(() => {
+    S.seconds++;
+    updateHUD();
+  }, 1000);
+}
+
+function winGame(){
+  S.playing = false;
+  clearInterval(S.timerId);
+  sfxWin();
+  pikaReact('happy');
+  pikaSay('太棒了!', 'Bạn giỏi quá!');
+  setTimeout(() => speak('太棒了'), 500);
+  const mm = Math.floor(S.seconds / 60), ss = S.seconds % 60;
+  ovText.innerHTML = `⏱ Thời gian: <b>${pad2(mm)}:${pad2(ss)}</b><br>⭐ Điểm: <b>${S.score}</b>`;
+  overlay.classList.remove('hidden');
+}
+
+/* =========================================================
+   15. TỪ VỰNG (giữ nguyên)
+   ========================================================= */
+function buildVocab(){
+  const usedSet = new Set();
+  for(let r = 1; r <= S.rows; r++)
+    for(let c = 1; c <= S.cols; c++)
+      if(S.grid[r][c]) usedSet.add(S.grid[r][c].w);
+
+  const list = WORDS.filter(x => usedSet.has(x.w));
+  vocabEl.innerHTML = list.map(x => `
+    <div class="vcard">
+      <div class="hz">${x.w}</div>
+      <div class="py">${x.p}</div>
+      <div class="mn">${x.m}</div>
+    </div>`).join('');
+}
+
+/* =========================================================
+   16. KHỞI ĐỘNG (giữ nguyên + lời chào Pikachu)
+   ========================================================= */
+function newGame(){
+  clearInterval(S.timerId);
+  S.seconds = 0;
+  S.score = 0;
+  S.selected = null;
+  S.lock = false;
+  S.playing = true;
+  overlay.classList.add('hidden');
+
+  const [rows, cols] = LEVELS[levelSel.value];
+  buildBoard(rows, cols);
+
+  infobar.innerHTML = '👆 Chạm vào một thẻ để xem phiên âm và nghĩa của từ';
+  startTimer();
+
+  // Lời chào dễ thương
+  setTimeout(() => pikaSay('Xin chào!', 'Chọn 2 từ giống nhau nhé!'), 500);
+}
+
+/* --- Sự kiện (giữ nguyên) --- */
+document.getElementById('btnNew').addEventListener('click', newGame);
+document.getElementById('btnHint').addEventListener('click', hint);
+document.getElementById('btnShuffle').addEventListener('click', () => shuffleBoard(false));
+document.getElementById('ovBtn').addEventListener('click', newGame);
+levelSel.addEventListener('change', newGame);
+
+document.getElementById('btnVocab').addEventListener('click', () => {
+  vocabEl.classList.toggle('show');
+});
+
+document.getElementById('btnSound').addEventListener('click', (e) => {
+  S.soundOn = !S.soundOn;
+  e.currentTarget.textContent = S.soundOn ? '🔊' : '🔇';
+  if(!S.soundOn && 'speechSynthesis' in window) window.speechSynthesis.cancel();
+});
+
+/* Pikachu: bấm để nghe lại từ vừa ghép */
+pikaEl.addEventListener('click', () => {
+  if(S.lastWord){
+    speak(S.lastWord);
+    pikaReact('select');
+    pikaSay(S.lastWord, '🔊 Nghe lại nè!');
+  }
+});
+
+let resizeTimer = null;
+window.addEventListener('resize', () => {
+  clearTimeout(resizeTimer);
+  resizeTimer = setTimeout(applyLayout, 120);
+});
+
+/* Bắt đầu */
+if('speechSynthesis' in window) window.speechSynthesis.getVoices();
+newGame();
+</script>
+</body>
+</html>
